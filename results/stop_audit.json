@@ -1,0 +1,84 @@
+{
+ "base_model": "google/gemma-4-31b-it",
+ "eos_token_id": [
+  1,
+  106,
+  50
+ ],
+ "eos_tokens": [
+  "<eos>",
+  "<turn|>",
+  "<|tool_response>"
+ ],
+ "versions": {
+  "transformers": "5.17.0",
+  "trl": "1.17.1",
+  "unsloth": "2026.11.3",
+  "unsloth_zoo": "2026.11.4"
+ },
+ "recipes": {
+  "model turns only (hand-written, round 1)": {
+   "stop": 183,
+   "stop_sup": 0,
+   "result": 70579,
+   "result_sup": 0,
+   "model": 16412,
+   "model_sup": 16412,
+   "other": 41209,
+   "other_sup": 0
+  },
+  "model turns + stop token (hand-written, fixed)": {
+   "stop": 183,
+   "stop_sup": 183,
+   "result": 70579,
+   "result_sup": 0,
+   "model": 16412,
+   "model_sup": 16412,
+   "other": 41209,
+   "other_sup": 0
+  },
+  "no mask (loss on every token)": {
+   "stop": 183,
+   "stop_sup": 183,
+   "result": 70579,
+   "result_sup": 70579,
+   "model": 16412,
+   "model_sup": 16412,
+   "other": 41209,
+   "other_sup": 41209
+  },
+  "transformers return_assistant_tokens_mask (TRL assistant_only_loss)": {
+   "stop": 183,
+   "stop_sup": 0,
+   "result": 70579,
+   "result_sup": 0,
+   "model": 16412,
+   "model_sup": 0,
+   "other": 41209,
+   "other_sup": 0
+  },
+  "assistant-message span by prefix diff (first 4 trajectories)": {
+   "stop": 74,
+   "stop_sup": 74,
+   "result": 27191,
+   "result_sup": 0,
+   "model": 6195,
+   "model_sup": 6195,
+   "other": 16259,
+   "other_sup": 16
+  },
+  "unsloth train_on_responses_only(<|turn>user / <|turn>model)": {
+   "stop": 183,
+   "stop_sup": 183,
+   "result": 70579,
+   "result_sup": 70579,
+   "model": 16412,
+   "model_sup": 16412,
+   "other": 41209,
+   "other_sup": 10
+  }
+ },
+ "notes": {
+  "template_has_generation_tag": false
+ }
+}
