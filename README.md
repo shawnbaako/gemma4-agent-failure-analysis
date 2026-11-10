@@ -44,3 +44,7 @@ corrected mask is `_assistant_mask` in `training/train_e4b_lora.py`.
 
 Adapter weights are not released: none improved the solve rate. Full candidate directories (complete system prompts and
 configs) will be added after the competition's final deadline.
+
+## License
+
+Apache License 2.0; see `LICENSE`. Copyright 2026 Shawn Baako.
