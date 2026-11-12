@@ -1,4 +1,4 @@
-# Where a Small-Model Coding Agent Loses Tasks: Tool-Call Mechanics, Stop-Token Supervision and Missing Issue Text
+# Tool-Call Mechanics, Stop-Token Supervision and Missing Issue Text: A Failure Analysis of Gemma 4 as a Coding Agent
 
 ## Controlled experiments with Gemma 4 as a bug-fixing agent under a fixed per-task budget
 
