@@ -1,4 +1,4 @@
-# Tool-Call Mechanics, Stop-Token Supervision and Missing Issue Text: A Failure Analysis of Gemma 4 as a Coding Agent
+# Tool Calls, Stop Tokens and Missing Issue Text: Gemma 4 as a Coding Agent
 
 Code, per-task results and the writeup for a study of Gemma 4 (31B int4, E4B) as a bug-fixing agent in the
 official harness of the Google Gemma 4 Developer Agent competition.

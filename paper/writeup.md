@@ -1,4 +1,4 @@
-# Tool-Call Mechanics, Stop-Token Supervision and Missing Issue Text: A Failure Analysis of Gemma 4 as a Coding Agent
+# Tool Calls, Stop Tokens and Missing Issue Text: Gemma 4 as a Coding Agent
 
 ## Controlled experiments with Gemma 4 as a bug-fixing agent under a fixed per-task budget
 
@@ -49,7 +49,7 @@ The parser was the largest single mechanism. vLLM 0.19.1's gemma4 parser splits 
 
 **Time is not the binding constraint.** Figure 2 pools 232 task runs of v3 (both pools, two temperatures). Of the 93 solves, 63% finish within two minutes and 90% within four; the final two minutes of budget add 7%. Sampling diversity is worth more than time: four samples at temperature 0.7 solved 16 to 18 tasks each and 21 of 42 in union.
 
-This holds on public repositories the model has likely seen. A later submission with the same prompt and larger limits (eight minutes, 28 tool calls, 4096 thinking tokens, 8192 output tokens) solved the same 27 of 64 public tasks but scored 0.17 against 0.13 on the hidden private-repository set, a difference of about one standard deviation for a single run.
+This holds on public repositories the model has likely seen. A later submission with the same prompt and larger limits (eight minutes, 4096 thinking tokens) solved the same 27 of 64 public tasks but scored 0.17 against 0.13 on the hidden set, about one standard deviation for a single run.
 
 ![Figure 2](figures/fig2_budget_curve.png)
 
@@ -117,7 +117,7 @@ Statement length separates outcomes more sharply than any patch feature. On pool
 
 This reframes Section 5. The tasks self-sampling cannot cover are mostly tasks whose statement omits the expected behavior, so no amount of the model's own passing trajectories contains them. It also bounds what any prompt can do on such tasks, and identifies statement information content as a property a benchmark of this kind should report.
 
-**Process changes, three more nulls.** Three structural changes to the agent left the count on the 64 tasks unchanged: a locating stage that reports candidate code before the coder starts (25), a bundled script that prints a code briefing as the first tool call and runs related tests before submission (26), and a second agent that reviews the diff with a fresh context (26), against 27 for the single agent. The agent used the tools, calling the briefing first in 56 of 64 tasks and the pre-submission check in 49, but edited a file the reference patch touches no more often (47 of 63 tasks against 49). The reviewer changed the patch in 10 tasks; one became a solve and one stopped being one.
+**Process changes, three more nulls.** Three structural changes left the count on the 64 tasks unchanged: a locating stage before the coder (25), a bundled script that prints a code briefing as the first tool call and runs related tests before submission (26), and a fresh-context reviewer of the diff (26), against 27 for the single agent. The agent called the briefing first in 56 of 64 tasks but edited a file the reference patch touches no more often (47 of 63 tasks against 49).
 
 ## 7. Related work
 
@@ -133,9 +133,9 @@ This reframes Section 5. The tasks self-sampling cannot cover are mostly tasks w
 
 ## 8. Limitations and reproducibility
 
-The pools are 42 and 22 tasks from two Python repositories, and most comparisons are single runs. The no-issue runs in Figure 1 mix two temperatures and two prompts. Three linked issues contained the fix and were excluded; the remaining bodies may still hint at it, as real issues do. Issue text is not available to a competition submission, so Section 6 is a diagnosis, not a method. The stop-probability drift is measured on clean contexts and understates the self-reinforcing loops seen at inference. Pool A overlaps the adapter's training tasks; pool B does not. The Modal sandbox for pool B carries extra test dependencies and differs from Kaggle grading. Leaderboard scores are single runs on a 60-task hidden set. E4B also runs this agent loop outside the harness: on a 2016 Tesla P40 with llama.cpp (Gerganov et al.) and the official QAT Q4_0 GGUF it decodes 50 tokens per second, and llama.cpp's parser accepted every quoted `edit_file` call that vLLM's dropped.
+The pools are 42 and 22 tasks from two Python repositories, and most comparisons are single runs. The no-issue runs in Figure 1 mix two temperatures and two prompts. Three linked issues contained the fix and were excluded; the remaining bodies may still hint at it, as real issues do. Issue text is not available to a competition submission, so Section 6 is a diagnosis, not a method. The stop-probability drift is measured on clean contexts and understates the self-reinforcing loops seen at inference. Pool A overlaps the adapter's training tasks; pool B does not. The Modal sandbox for pool B carries extra test dependencies and differs from Kaggle grading. Leaderboard scores are single runs on a 60-task hidden set.
 
-All numbers come from the harness's `run_results.jsonl` and trace files. The public repository (https://github.com/shawnbaako/gemma4-agent-failure-analysis) contains the training script with the corrected mask, the trajectory filter, the Modal rollout runner, the stop-token probe and audit, the mask checker, the analysis scripts, and a per-task results table for every run cited here (outcomes and trace counts, no task content). Prompts are quoted where measured; full candidate directories follow after the competition's final deadline. Adapter weights are not released because none improved the solve rate.
+All numbers come from the harness's `run_results.jsonl` and trace files. The public repository (https://github.com/shawnbaako/gemma4-agent-failure-analysis) contains the training script with the corrected mask, the rollout runner, the stop-token probe and audit, the mask checker, the analysis scripts and a per-task results table for every run cited (outcomes and trace counts, no task content). Prompts are quoted where measured; full candidate directories follow after the competition's final deadline. Adapter weights are not released because none improved the solve rate.
 
 ## References
 
@@ -143,7 +143,6 @@ All numbers come from the harness's `run_results.jsonl` and trace files. The pub
 - Axolotl discussion 2259. Sample packing masks the `<end_of_turn>` token. 2025. https://github.com/axolotl-ai-cloud/axolotl/discussions/2259
 - Deng, X. et al. SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks? 2025. arXiv:2509.16941.
 - Google. Agent Development Kit (ADK) for Python. https://github.com/google/adk-python
-- Gerganov, G. and contributors. llama.cpp. https://github.com/ggml-org/llama.cpp
 - Golubev, A. et al. Training Long-Context, Multi-Turn Software Engineering Agents with Reinforcement Learning. 2025. arXiv:2508.03501.
 - Hu, E. J. et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR 2022.
 - Huang, A. et al. Self-Improvement in Language Models: The Sharpening Mechanism. 2024. arXiv:2412.01951.
