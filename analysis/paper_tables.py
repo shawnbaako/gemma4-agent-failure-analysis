@@ -26,6 +26,8 @@ RUNS = {  # label -> (directory under --rollouts, sample)
     '31b_lora_r2_rich': ('31b-lora-r2-val42', 's0'), '31b_lora_r2_fastapi': ('31b-lora-r2-fastapi22', 's0'),
     'e4b_base': ('e4b-base-val64', 's0'), 'e4b_lora_r1': ('e4b-lora-r1-val64', 's0'),
     'e4b_lora_r2': ('e4b-lora-r2-val64', 's0'), 'e4b_lora_r3': ('e4b-lora-r3-val64', 's0'),
+    '31b_v6_analyser_stage': ('31b-v6-val64', 's0'), '31b_v7_public_limits': ('31b-v7-val64', 's0'),
+    '31b_v8_skill_script': ('31b-v8-val64', 's0'), '31b_v9_reviewer': ('31b-v9-val64', 's0'),
 }
 
 

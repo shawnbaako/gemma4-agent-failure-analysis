@@ -21,7 +21,7 @@ Contributions:
 
 ## 2. Setup
 
-**Harness.** All runs use the unmodified official harness (swegemma 0.2.11) with vLLM 0.19.1 (Kwon et al., 2023) and its gemma4 tool parser. A candidate is a declarative directory: `agent.yaml`, a system prompt, sampling config, per-task budgets and optionally a LoRA adapter. The agent has shell, file read/edit/write, patch submission and two code-graph tools (`get_code_neighbors`, `search_similar_code`). Reference patches and tests are never visible to the agent or used in training.
+**Harness.** All runs use the competition's official harness, `swegemma` 0.2.11, unmodified. It compiles a candidate into an agent on Google's Agent Development Kit (ADK 1.36.1), which runs the tool-calling loop, and serves the model with vLLM 0.19.1 (Kwon et al., 2023) and its gemma4 tool parser. A candidate is a declarative directory: `agent.yaml`, a system prompt, sampling config, per-task budgets and optionally a LoRA adapter. The agent has shell, file read/edit/write, patch submission and two code-graph tools (`get_code_neighbors`, `search_similar_code`). Reference patches and tests are never visible to the agent or used in training.
 
 **Tasks.** The public release has 129 tasks from four repositories. We ran every reference patch through the sandbox and report results only on tasks where it passes ("gold-valid"). Pool A has 42 tasks (41 from rich, one from fastapi), gold-valid in Kaggle's sandbox. Pool B has 22 fastapi tasks, gold-valid in a Modal sandbox that adds the repository's test dependencies. Solved means the hidden tests pass.
 
@@ -48,6 +48,8 @@ Table 1 compares a default-like prompt (v1) with the final prompt (v3) on the 23
 The parser was the largest single mechanism. vLLM 0.19.1's gemma4 parser splits a string argument at an inner double quote or backtick (vLLM issue 39069; issue 39072 reports a similar missing-argument failure in an edit tool), so `old_string` or `new_string` arrives missing, the tool layer rejects the call, and the model resends it. Fifty-six percent of gold-valid tasks need a quote inside the edited text. Two prompt rules removed the loss: write the strings as literal text, and on that error anchor the edit on neighbouring lines without quotes or apply it with a `python3` heredoc. A smaller thinking budget and a rule to make the first edit by the fifteenth call converted most timeouts into submitted patches. The v3 solved set contains v1's plus two tasks. On the public leaderboard, whose tasks come from private repositories, v1 and v3 both scored 0.13: the mechanical gains measured on public tasks did not move the hidden score.
 
 **Time is not the binding constraint.** Figure 2 pools 232 task runs of v3 (both pools, two temperatures). Of the 93 solves, 63% finish within two minutes and 90% within four; the final two minutes of budget add 7%. Sampling diversity is worth more than time: four samples at temperature 0.7 solved 16 to 18 tasks each and 21 of 42 in union.
+
+This holds on public repositories the model has likely seen. A later submission with the same prompt and larger limits (eight minutes, 28 tool calls, 4096 thinking tokens, 8192 output tokens) solved the same 27 of 64 public tasks but scored 0.17 against 0.13 on the hidden private-repository set, a difference of about one standard deviation for a single run.
 
 ![Figure 2](figures/fig2_budget_curve.png)
 
@@ -115,6 +117,8 @@ Statement length separates outcomes more sharply than any patch feature. On pool
 
 This reframes Section 5. The tasks self-sampling cannot cover are mostly tasks whose statement omits the expected behavior, so no amount of the model's own passing trajectories contains them. It also bounds what any prompt can do on such tasks, and identifies statement information content as a property a benchmark of this kind should report.
 
+**Process changes, three more nulls.** Three structural changes to the agent left the count on the 64 tasks unchanged: a locating stage that reports candidate code before the coder starts (25), a bundled script that prints a code briefing as the first tool call and runs related tests before submission (26), and a second agent that reviews the diff with a fresh context (26), against 27 for the single agent. The agent used the tools, calling the briefing first in 56 of 64 tasks and the pre-submission check in 49, but edited a file the reference patch touches no more often (47 of 63 tasks against 49). The reviewer changed the patch in 10 tasks; one became a solve and one stopped being one.
+
 ## 7. Related work
 
 **Interfaces.** SWE-bench (Jimenez et al., 2024) set the metric. SWE-agent (Yang et al., 2024) showed that the agent-computer interface matters as much as model choice; Table 1 is that finding at the level of tool-call syntax and one parser.
@@ -138,6 +142,7 @@ All numbers come from the harness's `run_results.jsonl` and trace files. The pub
 - Anthropic. Raising the bar on SWE-bench Verified with Claude 3.5 Sonnet. 2025. https://www.anthropic.com/research/swe-bench-sonnet
 - Axolotl discussion 2259. Sample packing masks the `<end_of_turn>` token. 2025. https://github.com/axolotl-ai-cloud/axolotl/discussions/2259
 - Deng, X. et al. SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks? 2025. arXiv:2509.16941.
+- Google. Agent Development Kit (ADK) for Python. https://github.com/google/adk-python
 - Gerganov, G. and contributors. llama.cpp. https://github.com/ggml-org/llama.cpp
 - Golubev, A. et al. Training Long-Context, Multi-Turn Software Engineering Agents with Reinforcement Learning. 2025. arXiv:2508.03501.
 - Hu, E. J. et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR 2022.
